@@ -23,7 +23,10 @@ typedef unsigned __int32 uint32_t;
 #else
 #error Do not know sized types on this platform
 #endif
-
+#ifdef SAILFISH
+#define uint16_t unsigned short int
+#define uint32_t unsigned int
+#endif
 typedef int16_t Int16BigEndian;
 typedef uint16_t UInt16LittleEndian;
 typedef int32_t Int32BigEndian;

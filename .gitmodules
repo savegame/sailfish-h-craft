@@ -1,0 +1,3 @@
+[submodule "libs/irrlicht"]
+	path = libs/irrlicht
+	url = git@git.sashikknox.ga:root/irrlicht.git

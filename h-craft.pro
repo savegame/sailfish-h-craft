@@ -16,14 +16,14 @@ sailfish: DEFINES += SAILFISH
 !sailfish: DEFINES += NO_IRR_COMPILE_WITH_OGLES1_
 x11: DEFINES += _IRR_LINUX_X11_RANDR_
 
-sailfish: DEFINES += HC1_OGLES
+sailfish: DEFINES += HC1_OGLES HAVE_STDINT_H
 
 INCLUDEPATH += libs/freealut/freealut-1.1.0/include
 
 TARGET = h-craft
 
 include(libs/tremor/tremor-1.0.2/tremor.pri)
-include(libs/freealut/freealut-1.1.0/freeault.pri)
+#include(libs/freealut/freealut-1.1.0/freeault.pri)
 include(libs/irrlicht/irrlicht.pri)
 include(libs/irrlicht/source/Irrlicht/jpeglib/jpeglib.pri)
 

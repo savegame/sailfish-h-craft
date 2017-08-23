@@ -1,18 +1,18 @@
-Name: irrlicht
-Summary: Irrlicht engine builded from OpenGL ES branch
-Version: 1.9
+Name: h-craft
+Summary: H-Craft port for SailfishOS
+Version: 1.0
 Release: 1
 # The contents of the Group field should be one of the groups listed here:
 # http://gitorious.org/meego-developer-tools/spectacle/blobs/master/data/GROUPS
 Group: Qt/Qt
-URL: http://example.org/
+URL: http://www.irrgheist.com
 License: LICENSE
 # This must be generated before uploading a package to a remote build service.
 # Usually this line does not need to be modified.
 Sources:
 - '%{name}-%{version}.tar.bz2'
 Description: |
-  Irrlicht Engine Waylan EGL Port Alpha
+  H-Craft port for SailfishOS, sources of original game http://www.irrgheist.com/hcraftsource.htm
 Configure: none
 # The qtc5 builder inserts macros to allow QtCreator to have fine
 # control over qmake/make execution
@@ -31,6 +31,10 @@ PkgConfigBR:
   - zlib
   - libpng
   - dbus-1
+  - vorbis
+  - vorbisenc
+  - vorbisfile
+  - ogg
 
 
 # Build dependencies without a pkgconfig setup can be listed here

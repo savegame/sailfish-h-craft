@@ -1,12 +1,31 @@
 TEMPLATE = app
 
+CONFIG += warn_off
 sailfish: CONFIG += sailfishapp
 CONFIG += link_pkgconfig
+
+sailfish: PKGCONFIG += wayland-client wayland-egl dbus-1
+PKGCONFIG += zlib libpng egl
+!sailfish: PKGCONFIG += bzip2
+x11: PKGCONFIG += x11 xrandr gl glesv2 xxf86vm sdl
+sailfish: PKGCONFIG += vorbis vorbisenc vorbisfile ogg openal
+sailfish: LIBS += -lbz2
+
+sailfish: DEFINES += SAILFISH
+!sailfish: DEFINES += _IRR_COMPILE_WITH_OPENGL_
+!sailfish: DEFINES += NO_IRR_COMPILE_WITH_OGLES1_
+x11: DEFINES += _IRR_LINUX_X11_RANDR_
+
+sailfish: DEFINES += HC1_OGLES
+
+INCLUDEPATH += libs/freealut/freealut-1.1.0/include
 
 TARGET = h-craft
 
 include(libs/tremor/tremor-1.0.2/tremor.pri)
 include(libs/freealut/freealut-1.1.0/freeault.pri)
+include(libs/irrlicht/irrlicht.pri)
+include(libs/irrlicht/source/Irrlicht/jpeglib/jpeglib.pri)
 
 HEADERS += \
     src/gui_dialogs/gui_ai.h \

@@ -6,7 +6,7 @@
 #ifdef HC1_HAS_FREETYPE
 
 #include <ft2build.h>
-#include <freetype.h>
+#include FT_FREETYPE_H
 #include <irrlicht.h>
 
 class CGUIFreetypeFont;

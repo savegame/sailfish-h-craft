@@ -23,7 +23,8 @@ irr::s32 GridTriangleSelector::getTriangleCount() const
 }
 
 void GridTriangleSelector::getTriangles(irr::core::triangle3df* triangles, irr::s32 arraySize,
-	irr::s32& outTriangleCount, const irr::core::matrix4* transform) const
+	irr::s32& outTriangleCount, const irr::core::matrix4* transform, 
+	bool useNodeTransform, irr::core::array<irr::scene::SCollisionTriangleRange> *outTriangleInfo) const
 {
 	u32 cnt = mTriangles.size();
 	if (cnt > (u32)arraySize)
@@ -57,7 +58,8 @@ void GridTriangleSelector::getTriangles(irr::core::triangle3df* triangles, irr::
 }
 
 void GridTriangleSelector::getTriangles(irr::core::triangle3df* triangles, irr::s32 arraySize,
-	irr::s32& outTriangleCount, const irr::core::aabbox3d<irr::f32>& box, const irr::core::matrix4* transform) const
+	irr::s32& outTriangleCount, const irr::core::aabbox3d<irr::f32>& box, const irr::core::matrix4* transform,
+	bool useNodeTransform, irr::core::array<irr::scene::SCollisionTriangleRange>* outTriangleInfo) const
 {
 	outTriangleCount = 0;
 
@@ -155,14 +157,23 @@ void GridTriangleSelector::getTriangles(irr::core::triangle3df* triangles, irr::
 	// Could use normal triangles as fallback, but probably better failing completely so users notice things have gone wrong
 }
 
+//void GridTriangleSelector::getTriangles(core::triangle3df *triangles, s32 arraySize, 
+//	s32 &outTriangleCount, const irr::core::aabbox3d<f32> &box, 
+//	const core::matrix4 *transform, bool useNodeTransform, 
+//	irr::core::array<scene::SCollisionTriangleRange> *outTriangleInfo) const
+//{
+//	getTriangles(triangles,arraySize,outTriangleCount,box,transform);
+//}
+
 void GridTriangleSelector::getTriangles(irr::core::triangle3df* triangles, irr::s32 arraySize,
-	irr::s32& outTriangleCount, const irr::core::line3d<irr::f32>& line,const irr::core::matrix4* transform) const
+	irr::s32& outTriangleCount, const irr::core::line3d<irr::f32>& line,const irr::core::matrix4* transform,
+	bool useNodeTransform, irr::core::array<irr::scene::SCollisionTriangleRange>* outTriangleInfo) const
 {
 	// TODO: no optimization for that so far
-
+	
 	irr::core::aabbox3d<irr::f32> box(line.start);
 	box.addInternalPoint(line.end);
-
+	
 	getTriangles(triangles, arraySize, outTriangleCount, box, transform);
 }
 

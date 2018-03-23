@@ -45,6 +45,8 @@ include(libs/tremor/tremor-1.0.2/tremor.pri)
 include(libs/freealut/freealut-1.1.0/freealut.pri)
 #include(libs/freealut/freealut-1.1.0/freeault.pri)
 
+media_target.files=$$PWD/media
+media_target.path=/usr/share/$$TARGET/media
 
 HEADERS += \
     src/gui_dialogs/gui_ai.h \

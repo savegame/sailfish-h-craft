@@ -48,6 +48,8 @@ include(libs/freealut/freealut-1.1.0/freealut.pri)
 media_target.files=$$PWD/media
 media_target.path=/usr/share/$$TARGET/media
 
+INSTALLS += media_target
+
 HEADERS += \
     src/gui_dialogs/gui_ai.h \
     src/gui_dialogs/gui_controller_display.h \

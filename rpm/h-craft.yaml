@@ -51,9 +51,10 @@ Requires:
 #  - wayland-egl
   - zlib
   - libpng
-  - openal
-  - ogg 
-  - vorbis
+  - OpenAL
+  - libogg
+  - libvorbis
+  - bzip2
 
 # All installed files
 Files:

@@ -46,8 +46,8 @@ include(libs/tremor/tremor-1.0.2/tremor.pri)
 include(libs/freealut/freealut-1.1.0/freealut.pri)
 #include(libs/freealut/freealut-1.1.0/freeault.pri)
 
-media_target.files=$$PWD/media
-media_target.path=/usr/share/$$TARGET/media
+media_target.files=$$PWD/media $$PWD/shaders $$PWD/tests
+media_target.path=/usr/share/$$TARGET/
 
 INSTALLS += media_target
 

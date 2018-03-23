@@ -22,8 +22,8 @@ SOURCES += \
     libs/tremor/tremor-1.0.2/floor0.c \
     libs/tremor/tremor-1.0.2/floor1.c \
     libs/tremor/tremor-1.0.2/info.c \
-    libs/tremor/tremor-1.0.2/iseeking_example.c \
-    libs/tremor/tremor-1.0.2/ivorbisfile_example.c \
+#    libs/tremor/tremor-1.0.2/iseeking_example.c \
+#    libs/tremor/tremor-1.0.2/ivorbisfile_example.c \
     libs/tremor/tremor-1.0.2/mapping0.c \
     libs/tremor/tremor-1.0.2/mdct.c \
     libs/tremor/tremor-1.0.2/registry.c \

@@ -253,7 +253,7 @@ bool App::Init(int argc, char *argv[], void * systemData)
         LOG.Debug("\n");
     }
 
-#ifndef __ANDROID__
+#if !defined(__ANDROID__)/* && !defined(_IRR_COMPILE_WITH_SAILFISH_DEVICE_)*/
 	irr::IrrlichtDevice* irrDevice = mIrrlichtManager->CreateIrrlichtDevicePC(*mConfig);
 #endif
     if ( !mIrrlichtManager->Init(*mConfig) )
@@ -288,7 +288,7 @@ bool App::Init(int argc, char *argv[], void * systemData)
         LOG.Warn(L"mStringTable->Load failed\n");
     }
 
-#if defined(_IRR_COMPILE_WITH_X11_DEVICE_) && !defined(__ANDROID__)
+#if defined(_IRR_COMPILE_WITH_X11_DEVICE_) && !defined(__ANDROID__) && !defined(_IRR_COMPILE_WITH_SAILFISH_DEVICE_)
 	// This should prevent screensaver from starting (on Windows Irrlicht does that)
 	// TODO: not yet tested if it works.
 	XSetScreenSaver((Display*)(mIrrlichtManager->GetVideoDriver()->getExposedVideoData().OpenGLLinux.X11Display), 0, 0, DefaultBlanking, DefaultExposures);

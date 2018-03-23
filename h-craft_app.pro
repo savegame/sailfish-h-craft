@@ -42,6 +42,12 @@ INCLUDEPATH += libs/freealut/freealut-1.1.0/include
 
 TARGET = h-craft
 
+sailfish {
+    DEFINES += "_HCRAFT_TARGET_NAME=\\\"$${TARGET}\\\""
+    DEFINES += HOVER_RELEASE
+}
+
+
 include(libs/tremor/tremor-1.0.2/tremor.pri)
 include(libs/freealut/freealut-1.1.0/freealut.pri)
 #include(libs/freealut/freealut-1.1.0/freeault.pri)

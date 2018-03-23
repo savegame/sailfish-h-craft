@@ -57,7 +57,7 @@ irr::IrrlichtDevice* IrrlichtManager::CreateIrrlichtDevicePC(const Config& confi
     dimension.Width = config.GetResolutionX();
     dimension.Height = config.GetResolutionY();
     int bitdepth = config.GetBitDepth();
-
+#ifndef _IRR_COMPILE_WITH_SAILFISH_DEVICE_
     IrrlichtDevice *dummyDevice = 0;
     dummyDevice = createDevice(video::EDT_NULL,core::dimension2d<u32>(100,100),false,false);
     if ( dummyDevice )
@@ -97,7 +97,7 @@ irr::IrrlichtDevice* IrrlichtManager::CreateIrrlichtDevicePC(const Config& confi
             bitdepth = desktopDepth;
         }
     }
-
+#endif
     mEventReceiver = new EventReceiverBase(config);
 
 	SIrrlichtCreationParameters creationParameters;

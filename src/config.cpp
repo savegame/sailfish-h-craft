@@ -152,7 +152,12 @@ Config::~Config()
 
 void Config::Init(const char *argv0_)
 {
-#ifndef __ANDROID__
+#ifdef _IRR_COMPILE_WITH_SAILFISH_DEVICE_
+    mBasePath = "/usr/share/";
+    mBasePath += _HCRAFT_TARGET_NAME;
+    mBasePath += "/";
+    LOG.InfoLn("BasePath: ", mBasePath.c_str());
+#elif !defined(__ANDROID__)
     char cwd[MAXPATHLEN];
 #if defined(_MSC_VER)
     _getcwd(cwd, MAXPATHLEN);

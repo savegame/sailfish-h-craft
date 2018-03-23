@@ -5,13 +5,14 @@ sailfish: CONFIG += sailfishapp
 CONFIG += link_pkgconfig
 
 sailfish: PKGCONFIG += wayland-client wayland-egl dbus-1
+sailfish: PKGCONFIG +=  sdl2
 PKGCONFIG += zlib libpng egl
 !sailfish: PKGCONFIG += bzip2
 x11: PKGCONFIG += x11 xrandr gl glesv2 xxf86vm sdl
 sailfish: PKGCONFIG += vorbis vorbisenc vorbisfile ogg openal
 sailfish: LIBS += -lbz2
 
-sailfish: DEFINES += SAILFISH
+sailfish: DEFINES += _IRR_COMPILE_WITH_SAILFISH_DEVICE_
 !sailfish: DEFINES += _IRR_COMPILE_WITH_OPENGL_
 !sailfish: DEFINES += NO_IRR_COMPILE_WITH_OGLES1_
 x11: DEFINES += _IRR_LINUX_X11_RANDR_
@@ -19,7 +20,6 @@ x11: DEFINES += _IRR_COMPILE_WITH_OGLES2_
 
 x11 {
 	DEFINES -= _IRR_COMPILE_WITH_SAILFISH_DEVICE_
-	DEFINES += NO_IRR_COMPILE_WITH_QML_RENDER
 	DEFINES += _IRR_COMPILE_WITH_X11_
 	DEFINES += _IRR_COMPILE_WITH_OGLES2_
 	DEFINES += NO_IRR_COMPILE_WITH_OGLES1_

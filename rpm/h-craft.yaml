@@ -41,7 +41,6 @@ PkgConfigBR:
 # Build dependencies without a pkgconfig setup can be listed here
 
 PkgBR:
-#  - libjpeg-turbo-devel
   - bzip2-devel
 #  - package-needed-to-build
 

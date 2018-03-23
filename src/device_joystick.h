@@ -7,7 +7,11 @@
 #include "input_device.h"
 #include "device_joystick_settings.h"
 #ifdef HC1_HAS_SDL
-#include "SDL/SDL.h"
+# ifdef _IRR_COMPILE_WITH_SAILFISH_DEVICE_
+#  include <SDL.h>
+# else
+#  include "SDL/SDL.h"
+# endif
 #endif
 #include <vector>
 

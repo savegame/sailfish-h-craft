@@ -22,7 +22,11 @@ DeviceJoystickSDL::DeviceJoystickSDL(SDL_Joystick * sdlJoystick_) : IDeviceJoyst
 
 DeviceJoystickSDL::~DeviceJoystickSDL()
 {
+#ifdef _IRR_COMPILE_WITH_SAILFISH_DEVICE_
+    if ( SDL_JoystickGetAttached(mSdlJoystick) )
+#else
     if ( SDL_JoystickOpened(SDL_JoystickIndex(mSdlJoystick)) )
+#endif
     {
         SDL_JoystickClose(mSdlJoystick);
         mSdlJoystick = NULL;
@@ -34,14 +38,23 @@ std::string DeviceJoystickSDL::GetTypeName() const
 {
     std::string name("JOYSTICK "); // TODO: i18n
     char buf[100];
+
+#ifdef _IRR_COMPILE_WITH_SAILFISH_DEVICE_
+    sprintf(buf, "%d", SDL_JoystickInstanceID(mSdlJoystick) );
+#else
     sprintf(buf, "%d", SDL_JoystickIndex(mSdlJoystick));
+#endif
     name += buf;
     return name;
 }
 
 std::string DeviceJoystickSDL::GetDeviceName() const
 {
+#ifdef _IRR_COMPILE_WITH_SAILFISH_DEVICE_
+    return std::string( SDL_JoystickName(mSdlJoystick) );
+#else
     return std::string( SDL_JoystickName(SDL_JoystickIndex(mSdlJoystick)) );
+#endif
 }
 
 InputDeviceType DeviceJoystickSDL::GetType() const

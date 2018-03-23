@@ -1,7 +1,7 @@
 // Written by Michael Zeilfelder, please check licenseHCraft.txt for the zlib-style license text.
 
-#ifndef _RANDOM_H
-#define _RANDOM_H
+#ifndef _RANDOM_GENERATOR_INCLUDED_H
+#define _RANDOM_GENERATOR_INCLUDED_H
 
 // ------------------------------------------------------------
 // Get random numbers.
@@ -25,4 +25,4 @@ public:
     void Test();
 };
 
-#endif // _RANDOM_H
+#endif // _RANDOM_GENERATOR_INCLUDED_H

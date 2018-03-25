@@ -42,6 +42,7 @@ PkgConfigBR:
 
 PkgBR:
   - bzip2-devel
+  - freetype-devel
 #  - package-needed-to-build
 
 # Runtime dependencies which are not automatically detected
@@ -55,6 +56,7 @@ Requires:
   - libogg
   - libvorbis
   - bzip2
+  - freetype
 
 # All installed files
 Files:

@@ -195,6 +195,9 @@ private:
 
     // paths
     std::string mAndroidFilesPath;
+#ifdef _IRR_COMPILE_WITH_SAILFISH_DEVICE_
+    std::string mUserConfigPath;
+#endif
     std::string mBasePath;
     std::string mPathMedia;
     std::string mPathTextures;

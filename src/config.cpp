@@ -158,6 +158,10 @@ void Config::Init(const char *argv0_)
     mBasePath = "/usr/share/";
     mBasePath += _HCRAFT_TARGET_NAME;
     mBasePath += "/";
+
+    mUserConfigPath = "/home/nemo/.config/";
+    mUserConfigPath += _HCRAFT_TARGET_NAME;
+    mUserConfigPath += "/";
     LOG.InfoLn("BasePath: ", mBasePath.c_str());
 #elif !defined(__ANDROID__)
     char cwd[MAXPATHLEN];
@@ -244,7 +248,11 @@ std::string Config::GetPathUI() const
 
 std::string Config::GetPathRecordings() const
 {
+#ifdef _IRR_COMPILE_WITH_SAILFISH_DEVICE_
+    return mUserConfigPath+mPathRecordings;
+#else
     return mBasePath+mPathRecordings;
+#endif
 }
 
 std::string Config::GetPathModels() const
@@ -256,11 +264,19 @@ std::string Config::GetPathUserData(bool checkAssetsFs) const
 {
 	if ( checkAssetsFs )
 	{
+#ifdef _IRR_COMPILE_WITH_SAILFISH_DEVICE_
+        return mUserConfigPath+mPathUserDataAssets;
+#else
 		return mBasePath+mPathUserDataAssets;
+#endif
 	}
 	else
 	{
-		return mBasePath+mPathUserData;
+#ifdef _IRR_COMPILE_WITH_SAILFISH_DEVICE_
+        return mUserConfigPath+mPathUserData;
+#else
+        return mBasePath+mPathUserData;
+#endif
 	}
 }
 

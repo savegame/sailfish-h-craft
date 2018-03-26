@@ -45,6 +45,7 @@ TARGET = h-craft
 sailfish {
     DEFINES += "_HCRAFT_TARGET_NAME=\\\"$${TARGET}\\\""
     DEFINES += HOVER_RELEASE
+    DEFINES += HC1_ENABLE_PROFILE
 }
 
 

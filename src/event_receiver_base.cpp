@@ -345,7 +345,7 @@ bool EventReceiverBase::OnEvent(const SEvent& event)
                 return true;
 		break;
 
-#ifdef __ANDROID__
+#if defined(__ANDROID__)
 		case EET_SYSTEM_EVENT:
 		{
 			if ( event.SystemEvent.EventType == ESET_ANDROID_CMD )
@@ -368,7 +368,8 @@ bool EventReceiverBase::OnEvent(const SEvent& event)
 			}
 		}
 		break;
-
+#endif
+#if defined(__ANDROID__) || defined(_IRR_COMPILE_WITH_SAILFISH_DEVICE_)
 		case EET_ACCELEROMETER_EVENT:
 		case EET_GYROSCOPE_EVENT:
             if ( APP.GetInputDeviceManager() && APP.GetInputDeviceManager()->OnEvent(event) )

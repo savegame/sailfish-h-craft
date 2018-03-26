@@ -35,6 +35,8 @@ Config::Config(void * systemData)
 , mDoesNeedLargeButtons(false)
 #ifdef __ANDROID__
 , mUseTouchInput(ETI_TOUCH_HARDWARE)
+#elif defined(_IRR_COMPILE_WITH_SAILFISH_DEVICE_)
+, mUseTouchInput(ETI_TOUCH_HARDWARE)
 #elif defined(HOVER_RELEASE)
 , mUseTouchInput(ETI_NO_TOUCH)
 #else

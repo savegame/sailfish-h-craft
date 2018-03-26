@@ -497,7 +497,7 @@ bool InputDeviceManager::OnEvent(const irr::SEvent &event)
 {
     switch ( event.EventType )
     {
-#ifdef __ANDROID__
+#if defined(__ANDROID__) || defined(_IRR_COMPILE_WITH_SAILFISH_DEVICE_)
 		case EET_TOUCH_INPUT_EVENT:
 		case EET_ACCELEROMETER_EVENT:
 		case EET_GYROSCOPE_EVENT:

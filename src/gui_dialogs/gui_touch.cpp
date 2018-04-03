@@ -501,8 +501,13 @@ void GuiTouch::SetTouchPos(float xAxis, float yAxis, ETOUCH_LAYOUT layout)
 		return;
 
 	bool useFullScreenArea = false;	// TODO: make it a parameter
+#ifdef _IRR_COMPILE_WITH_SAILFISH_DEVICE_
+    core::dimension2d<s32> dimScreen;
+    dimScreen.Width = driver->getScreenSize().Height ;
+    dimScreen.Height = driver->getScreenSize().Width ;
+#else
     core::dimension2d<s32> dimScreen( driver->getScreenSize() );
-
+#endif
 	if ( mImageTouchPosH )
 	{
 		core::recti areaH(GetAxisArea(ETA_HORIZONTAL, layout));

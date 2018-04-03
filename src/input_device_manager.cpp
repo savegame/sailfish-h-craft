@@ -504,7 +504,7 @@ bool InputDeviceManager::OnEvent(const irr::SEvent &event)
 		{
 			if ( mTouch )
 			{
-				mTouch->OnEvent(event, mConfig.GetUseTouchInput());
+                mTouch->OnEvent(event, mConfig.GetUseTouchInput());
 			}
 		}
 		break;

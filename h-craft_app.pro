@@ -46,8 +46,9 @@ sailfish {
     DEFINES += "_HCRAFT_TARGET_NAME=\\\"$${TARGET}\\\""
     DEFINES += HOVER_RELEASE
     DEFINES += HC1_ENABLE_PROFILE
+    DEFINES += USE_MY_RENDER_TARGET
 }
-
+debug:DEFINES+=_DEBUG
 
 include(libs/tremor/tremor-1.0.2/tremor.pri)
 include(libs/freealut/freealut-1.1.0/freealut.pri)
@@ -56,7 +57,9 @@ include(libs/freealut/freealut-1.1.0/freealut.pri)
 media_target.files=$$PWD/media $$PWD/shaders $$PWD/tests
 media_target.path=/usr/share/$$TARGET/
 
-INSTALLS += media_target
+dfshader.files = $$PWD/libs/irrlicht/media/Shaders/DFGLES2Screen.fsh  $$PWD/libs/irrlicht/media/Shaders/DFGLES2Screen.vsh
+dfshader.path=/usr/share/$$TARGET/shaders
+INSTALLS += media_target dfshader
 
 HEADERS += \
     src/gui_dialogs/gui_ai.h \

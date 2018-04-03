@@ -137,8 +137,12 @@ private:
     irr::scene::ISceneManager*    mSceneManager;
     irr::IEventReceiver*          mEventReceiver;
     irr::scene::ICameraSceneNode* mCameras[ECT_COUNT];	// weak pointers
-    irr::video::SMaterial mDefaultEditorMaterial;
-    std::vector<VideoMode> mVideoModes;
+    irr::video::SMaterial         mDefaultEditorMaterial;
+    std::vector<VideoMode>        mVideoModes;
+
+#ifdef _IRR_COMPILE_WITH_SAILFISH_DEVICE_
+    irr::video::ITexture*         mRenderTarget;
+#endif
 
 	typedef std::map<irr::s32, irr::s32>::iterator ES2ShaderMaterialIter;
     std::map<irr::s32, irr::s32> mES2ShaderMaterials;	// key is orig material id, value is shader material id

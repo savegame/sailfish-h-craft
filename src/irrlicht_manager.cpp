@@ -33,6 +33,9 @@ IrrlichtManager::IrrlichtManager()
     , mEventReceiver(NULL)
     , mStaticMeshTextureLoader(NULL)
     , mDynamicMeshTextureLoader(NULL)
+#ifdef _IRR_COMPILE_WITH_SAILFISH_DEVICE_
+    , mRenderTarget(NULL)
+#endif
 {
 	for ( int i=0; i < ECT_COUNT; ++i )
 		mCameras[i] = NULL;
@@ -416,6 +419,15 @@ void IrrlichtManager::InitVideoModes(const Config& config, irr::IrrlichtDevice* 
 		return;
 
     // get the available video modes
+#ifdef _IRR_COMPILE_WITH_SAILFISH_DEVICE_
+    {
+        VideoMode mode;
+        mode.mResolution.Width = device->getVideoDriver()->getScreenSize().Height;
+        mode.mResolution.Height = device->getVideoDriver()->getScreenSize().Width;
+        mode.mDepth = 32;
+        mVideoModes.push_back(mode);
+    }
+#else
     video::IVideoModeList *videoModes = device->getVideoModeList();
     for ( s32 m = 0; m < videoModes->getVideoModeCount(); ++m)
     {
@@ -429,6 +441,7 @@ void IrrlichtManager::InitVideoModes(const Config& config, irr::IrrlichtDevice* 
             mVideoModes.push_back(mode);
         }
     }
+#endif
     if ( !mVideoModes.size() )
     {
     	LOG.Info(L"Found no video modes so just adding some default modes\n");
@@ -808,6 +821,11 @@ void IrrlichtManager::Quit()
 		mDynamicMeshTextureLoader->drop();
 		mDynamicMeshTextureLoader = 0;
 	}
+//    if(mRenderTarget)
+//    {
+//        mRenderTarget->drop();
+//        mRenderTarget = NULL;
+//    }
 
 	ClearES2Shaders();
     if ( mIrrlichtDevice )
@@ -827,6 +845,22 @@ void IrrlichtManager::ForceIrrlichtUpdate()
     LOG.Debug("ForceIrrlichtUpdate\n");
     if ( mIrrlichtDevice && mIrrlichtDevice->run() && mVideoDriver && mSceneManager )
     {
+#ifdef _IRR_COMPILE_WITH_SAILFISH_DEVICE_
+        if(mRenderTarget == NULL)
+        {
+            core::dimension2du size;
+            size.Width = mVideoDriver->getScreenSize().Height;
+            size.Height = mVideoDriver->getScreenSize().Width;
+            mRenderTarget = mVideoDriver->addRenderTargetTexture(
+                            size, "RTT1", video::ECF_A8R8G8B8);
+            mVideoDriver->setRenderTarget(mRenderTarget, video::ECBF_COLOR);
+        }
+        else
+        //if( mRenderTarget )
+        {
+            mVideoDriver->setRenderTarget(mRenderTarget, video::ECBF_COLOR);
+        }
+#endif
         LOG.Debug("beginScene\n");
         mVideoDriver->beginScene(true, true, video::SColor(150,50,50,50));
         mSceneManager->drawAll();
@@ -835,6 +869,34 @@ void IrrlichtManager::ForceIrrlichtUpdate()
             mIrrlichtDevice->getGUIEnvironment()->drawAll();
         }
         LOG.Debug("endScene\n");
+#ifdef _IRR_COMPILE_WITH_SAILFISH_DEVICE_
+        if( mRenderTarget )
+        {
+            mVideoDriver->setRenderTarget(NULL, false, false);
+            video::SMaterial Material;
+            video::S3DVertex Vertices[4];
+            Material.Wireframe = false;
+            Material.Lighting = false;
+//            Material.
+            Material.Thickness=0.f;
+            Vertices[0] = video::S3DVertex(-1,-1.0,0, 5,1,0,
+                                           video::SColor(255,0,255,255), 0, 1);
+            Vertices[1] = video::S3DVertex(-1,1,0, 10,0,0,
+                                           video::SColor(255,255,0,255), 0, 0);
+            Vertices[2] = video::S3DVertex(1,1,0, 20,1,1,
+                                           video::SColor(255,255,255,0), 1, 0);
+            Vertices[3] = video::S3DVertex(1,-1,0, 40,0,1,
+                                           video::SColor(255,0,255,0), 1, 1);
+            irr::u16 indices[] = { 0,1,2, 0,2,3 };
+            mVideoDriver->setTransform ( irr::video::ETS_PROJECTION, irr::core::IdentityMatrix );
+            mVideoDriver->setTransform ( irr::video::ETS_VIEW, irr::core::IdentityMatrix );
+            mVideoDriver->setTransform ( irr::video::ETS_WORLD, irr::core::IdentityMatrix );
+            Material.setTexture(0, mRenderTarget);
+            mVideoDriver->setMaterial(Material);
+//            driver->setTransform(irr::video::ETS_WORLD, m_transformation);
+            mVideoDriver->drawVertexPrimitiveList(Vertices, 4, indices, 2, irr::video::EVT_STANDARD, irr::scene::EPT_TRIANGLES, irr::video::EIT_16BIT);
+        }
+#endif
         mVideoDriver->endScene();
     }
     LOG.Debug("ForceIrrlichtUpdate done\n");

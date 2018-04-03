@@ -944,7 +944,7 @@ bool Config::GetKey(std::string &key_, irr::io::IFileSystem * fs_)
 // Do we need to support triple-head? (3 monitors)
 bool Config::DoesNeedTripleHeadMode(int screenWidth, int screenHeight) const
 {
-#ifdef __ANDROID__
+#if defined(__ANDROID__) || defined(_IRR_COMPILE_WITH_SAILFISH_DEVICE_)
 	return false;
 #else
     return screenWidth / screenHeight >= 3.f;

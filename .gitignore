@@ -1,1 +1,4 @@
 h-craft.pro.user
+.DS_Store
+rpm.*.spec*
+rpm/*.spec*

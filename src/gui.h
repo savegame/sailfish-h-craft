@@ -138,7 +138,7 @@ public:
     // Game Dialogs
     void LoadMenuDialogs();
     GuiHud* GetGuiHud()                             { return mGuiHud; }
-    GuiTouch* GetGuiTouch()							{ return mGuiTouch; }
+    GuiTouch* GetGuiTouch()                         { return mGuiTouch; }
     GuiMenuMain* GetGuiMenuMain()                   { return mMenuMain; }
     GuiMenuChampionship* GetGuiMenuChampionship()   { return mMenuChampionship; }
     GuiMenuChampionshipProgress* GetGuiMenuChampionshipProgress() { return mMenuChampionshipProgress; }
@@ -160,13 +160,13 @@ public:
     GuiMenuGameEndRivals* GetGuiMenuGameEndRivals()   { return mMenuGameEndRivals; }
     GuiMenuPause* GetGuiMenuPause()                 { return mMenuPause; }
     GuiMenuCredits* GetGuiMenuCredits()             { return mMenuCredits; }
-    GuiMenuLicenses* GetGuiMenuLicenses()			{ return mMenuLicenses; }
+    GuiMenuLicenses* GetGuiMenuLicenses()           { return mMenuLicenses; }
     GuiMenuNagscreen* GetGuiMenuNagscreen()         { return mMenuNagscreen; }
     GuiMenuGraphics* GetGuiMenuGraphics()           { return mMenuGraphics; }
     GuiMenuLoadingScreen* GetGuiMenuLoadingScreen() { return mMenuLoadingScreen; }
     GuiMenuTutorial3* GetGuiMenuTutorial3()         { return mMenuTutorial3; }
     GuiMenuHoverUnlocked* GetGuiMenuHoverUnlocked() { return mMenuHoverUnlocked; }
-    GuiMenuKeyboard* GetGuiMenuKeyboard()			{ return mMenuKeyboard; }
+    GuiMenuKeyboard* GetGuiMenuKeyboard()           { return mMenuKeyboard; }
     GuiDlgOkCancel* GetGuiDlgOkCancel()             { return mGuiDlgOkCancel; }
 
     // this will work as long as always only one dialog at a time is active

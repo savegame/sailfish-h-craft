@@ -93,7 +93,13 @@ void GuiDialog::CheckScaling()
     irr::video::IVideoDriver* driver = GetDriver();
     if ( driver )
 	{
-		mScreenDim = driver->getScreenSize();
+#ifdef _IRR_COMPILE_WITH_SAILFISH_DEVICE_
+        core::dimension2du x = driver->getScreenSize();
+        mScreenDim.Width = x.Height;
+        mScreenDim.Height = x.Width;
+#else
+        mScreenDim = driver->getScreenSize();
+#endif
 		mScaleX = (float)mScreenDim.Width / (float)mDefaultScreenWidth;
 		mScaleY = (float)mScreenDim.Height  / (float)mDefaultScreenHeight;
 

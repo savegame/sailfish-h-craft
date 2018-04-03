@@ -181,7 +181,8 @@ HEADERS += \
     src/streaming.h \
     src/string_table.h \
     src/timer.h \
-    src/track_marker.h
+    src/track_marker.h \
+    src/sailfish_render.h
 
 SOURCES += \
     src/gui_dialogs/gui_ai.cpp \
@@ -292,7 +293,8 @@ SOURCES += \
     src/string_table.cpp \
     src/timer.cpp \
     src/track_marker.cpp \
-    src/convert_utf.c
+    src/convert_utf.c \
+    src/sailfish_render.cpp
 
 DISTFILES += \
     h-craft.desktop \

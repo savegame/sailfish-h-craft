@@ -756,38 +756,6 @@ void App::Run()
     scene::ISceneManager* sceneManager = mIrrlichtManager->GetSceneManager();
 	bool runningAppTest = mAppTester->HasTest();
 
-#ifdef _IRR_COMPILE_WITH_SAILFISH_DEVICE_
-    LOG.Info(L"Create RenderTarget for Sailfish device\n");
-    //create RenderTarget and QuadScreen
-    core::dimension2du size;
-    size.Height = videoDriver->getScreenSize().Width;
-    size.Width = videoDriver->getScreenSize().Height;
-//    size = videoDriver->getScreenSize();
-
-    irr::CIrrDeviceSailfish *sailfishDevice = dynamic_cast<irr::CIrrDeviceSailfish *>(irrlichtDevice);\
-    if( sailfishDevice )
-    {
-        sailfishDevice->setQESOrientation(EOET_TRANSFORM_90);
-    }
-# ifdef USE_MY_RENDER_TARGET
-    mColorTexture = videoDriver->addRenderTargetTexture(size, "RTT1", video::ECF_A8R8G8B8);
-    mDepthTexture = videoDriver->addRenderTargetTexture(size, "DepthStencil", video::ECF_D16);
-
-    mRenderTarget = videoDriver->addRenderTarget();
-    mRenderTarget->setTexture(mColorTexture, mDepthTexture);
-
-    mScreenQuad = new ScreenQuad(this);
-    mScreenQuad->m_material.setTexture(0,mColorTexture);
-    mScreenQuad->m_material.setTexture(1,mDepthTexture);
-//    scene::ICameraSceneNode *current = sceneManager->getActiveCamera();
-//    mFixedCamera = sceneManager->addCameraSceneNode(0, core::vector3df(0,0,-1));
-//    mFixedCamera->setTarget(core::vector3df(0,0,-1));
-
-//    gui::IGUIImage *mImage = env->addImage(mColorTexture, core::vector2di(0,0));
-//    mImage->setVisible(false);
-//    mImage->setScaleImage(true);
-# endif
-#endif
     LOG.Info(L"start running\n");
 	// draw everything
 	while(mIsRunning)
@@ -867,7 +835,7 @@ void App::Run()
 #ifdef _IRR_COMPILE_WITH_SAILFISH_DEVICE_
 # ifdef USE_MY_RENDER_TARGET
         // set texture render target
-        videoDriver->setRenderTargetEx(mRenderTarget,video::ECBF_COLOR | video::ECBF_DEPTH, video::SColor(0,0,0,255));
+        mIrrlichtManager->setRenderTarget();
 # endif
 #endif
 		// draw everything
@@ -892,19 +860,7 @@ void App::Run()
 #ifdef _IRR_COMPILE_WITH_SAILFISH_DEVICE_
 # ifdef USE_MY_RENDER_TARGET
 //         show rendered scene on quad
-        //current = sceneManager->getActiveCamera();
-        //sceneManager->setActiveCamera(mFixedCamera);
-        videoDriver->setRenderTargetEx(NULL,0,video::SColor(0));
-        mScreenQuad->draw(videoDriver);
-#ifdef _DEBUG
-        videoDriver->draw2DImage(mColorTexture,
-            core::recti(0,0,320,180),
-            core::recti(0,0,size.Width,size.Height));
-#endif
-        //mImage->setVisible(true);
-        //mImage->draw();
-        //mImage->setVisible(false);
-        //sceneManager->setActiveCamera(current);
+        mIrrlichtManager->unsetRenderTarget();
 # endif
 #endif
 		PROFILE_START(109);
@@ -995,7 +951,7 @@ void App::Quit()
 #ifndef __ANDROID__
 int main(int argc, char *argv[])
 {
-#if defined(DEBUG) && defined(__GNUC__) && !defined(__GNUWIN32__)
+#if defined(DEBUG) && defined(__GNUC__) && !defined(__GNUWIN32__) && !defined(_IRR_COMPILE_WITH_SAILFISH_DEVICE_)
 	// floating point exception trapping
 	feenableexcept (FE_INVALID|FE_DIVBYZERO|FE_OVERFLOW);	// TODO: |FE_UNDERFLOW crashes sound currently. Even when sound is disabled which is interesting in itself.
 #endif
@@ -1054,135 +1010,4 @@ void android_main(android_app* app)
 }
 #endif
 
-#ifdef _IRR_COMPILE_WITH_SAILFISH_DEVICE_
-ScreenQuad::ScreenQuad(App *app)
-{
-    irr::scene::ISceneManager* mgr = app->GetIrrlichtManager()->GetSceneManager();
-    bool UseHighLevelShaders= true;
-    m_material.Wireframe = false;
-    m_material.Lighting = false;
-    m_material.Thickness=0.f;
-    m_vertex[0] = video::S3DVertex(-1,-1.0,0, 5,1,0,
-                                   video::SColor(255,0,255,255), 0, 1);
-    m_vertex[1] = video::S3DVertex(-1,1,0, 10,0,0,
-                                   video::SColor(255,255,0,255), 0, 0);
-    m_vertex[2] = video::S3DVertex(1,1,0, 20,1,1,
-                                   video::SColor(255,255,255,0), 1, 0);
-    m_vertex[3] = video::S3DVertex(1,-1,0, 40,0,1,
-                                   video::SColor(255,0,255,0), 1, 1);
-    //shader
-#ifdef _DEBUG
-    irr::io::path psFileName = "/opt/sdk/h-craft";
-    irr::io::path vsFileName = "/opt/sdk/h-craft";
-#else
-    irr::io::path psFileName = "";
-    irr::io::path vsFileName = "";
-#endif
-    psFileName += app->GetConfig()->MakeFilenameShader("DFGLES2Screen.fsh").c_str();
-    vsFileName += app->GetConfig()->MakeFilenameShader("DFGLES2Screen.vsh").c_str();
 
-    irr::video::IGPUProgrammingServices* gpu = mgr->getVideoDriver()->getGPUProgrammingServices();
-    irr::s32 ShaderMaterial = 0 ;
-
-    if (gpu)
-    {
-        m_shader = new ScreenShaderCB();
-        m_shader->m_resolution.Width = app->GetIrrlichtManager()->GetVideoDriver()->getScreenSize().Height;
-        m_shader->m_resolution.Height = app->GetIrrlichtManager()->GetVideoDriver()->getScreenSize().Width;
-
-        if (true)
-        {
-            // Choose the desired shader type. Default is the native
-            // shader type for the driver
-            const irr::video::E_GPU_SHADING_LANGUAGE shadingLanguage = irr::video::EGSL_DEFAULT;
-
-            ShaderMaterial = gpu->addHighLevelShaderMaterialFromFiles(
-                        vsFileName, "main", irr::video::EVST_VS_1_1,
-                        psFileName, "main", irr::video::EPST_PS_1_1,
-                        m_shader, irr::video::EMT_SOLID, 0, shadingLanguage);
-//            if(ShaderMaterial > 0 )
-                m_material.MaterialType = ((irr::video::E_MATERIAL_TYPE)ShaderMaterial);
-//            else
-//                m_material.MaterialType = video::EMT_SOLID;
-        }
-    }
-    irr::u16 indices[] = { 0,1,2, 0,2,3 };
-    memcpy(m_index,indices, 6*sizeof(irr::u16));
-
-    m_transformation.setRotationDegrees( core::vector3df(0,0,0) );
-    m_transformation.setTranslation( core::vector3df(0,0,0) );
-    m_transformation.setScale(1.0);
-}
-
-ScreenQuad::~ScreenQuad()
-{
-    m_shader->drop();
-}
-
-ScreenShaderCB *ScreenQuad::getShader() const
-{
-    return m_shader;
-}
-
-void ScreenQuad::draw(video::IVideoDriver *driver)
-{
-    //        driver->setMaterial(irr::video::SMaterial());
-    driver->setTransform ( irr::video::ETS_PROJECTION, irr::core::IdentityMatrix );
-    driver->setTransform ( irr::video::ETS_VIEW, irr::core::IdentityMatrix );
-    driver->setTransform ( irr::video::ETS_WORLD, irr::core::IdentityMatrix );
-
-
-    driver->setMaterial(m_material);
-    driver->setTransform(irr::video::ETS_WORLD, m_transformation);
-    driver->drawVertexPrimitiveList(m_vertex, 4, m_index, 2, irr::video::EVT_STANDARD, irr::scene::EPT_TRIANGLES, irr::video::EIT_16BIT);
-}
-
-
-void ScreenShaderCB::OnSetConstants(video::IMaterialRendererServices *services, s32 userData)
-{
-    irr::video::IVideoDriver* driver = services->getVideoDriver();
-
-    // get shader constants id.
-
-    if (FirstUpdate)
-    {
-        WorldViewProjID = services->getVertexShaderConstantID("mWorldViewProj");
-        //			TransWorldID = services->getVertexShaderConstantID("mTransWorld");
-        //			InvWorldID = services->getVertexShaderConstantID("mInvWorld");
-        //			PositionID = services->getVertexShaderConstantID("mLightPos");
-        //			ColorID = services->getVertexShaderConstantID("mLightColor");
-        TextureID0 = services->getPixelShaderConstantID("Texture0");
-        TextureID1 = services->getPixelShaderConstantID("Texture1");
-        OrientationID = services->getPixelShaderConstantID("inScreenOrientation");
-        ResolutionID = services->getPixelShaderConstantID("inResolution");
-        DepthNearID = services->getPixelShaderConstantID("inDepthNear");
-        DepthFarID = services->getPixelShaderConstantID("inDepthFar");
-        IsUseDepthID  = services->getPixelShaderConstantID("inIsUseDepth");
-        FirstUpdate = false;
-    }
-
-    irr::core::matrix4 invWorld = driver->getTransform(irr::video::ETS_WORLD);
-    invWorld.makeInverse();
-
-    irr::core::matrix4 worldViewProj;
-    worldViewProj = driver->getTransform(irr::video::ETS_PROJECTION);
-    worldViewProj *= driver->getTransform(irr::video::ETS_VIEW);
-    worldViewProj *= driver->getTransform(irr::video::ETS_WORLD);
-
-    services->setVertexShaderConstant(WorldViewProjID, worldViewProj.pointer(), 16);
-
-    irr::video::SColorf col(0.0f,1.0f,1.0f,0.0f);
-    irr::core::matrix4 world = driver->getTransform(video::ETS_WORLD);
-    world = world.getTransposed();
-
-    irr::s32 TextureLayerID = 0;
-    services->setPixelShaderConstant(TextureID0, &TextureLayerID, 1);
-    irr::s32 TextureLayerID1 = 1;
-    services->setPixelShaderConstant(TextureID1, &TextureLayerID1, 1);
-    services->setPixelShaderConstant(OrientationID,&m_screenOrientation, 1);
-    services->setPixelShaderConstant(ResolutionID,reinterpret_cast<f32*>(&m_resolution), 2);
-    services->setPixelShaderConstant(DepthNearID,reinterpret_cast<f32*>(&m_depth_near), 2);
-    services->setPixelShaderConstant(DepthFarID,reinterpret_cast<f32*>(&m_depth_far), 2);
-}
-
-#endif

@@ -20,6 +20,8 @@
 #include <algorithm>
 #ifdef __ANDROID__
 #include <android_native_app_glue.h>
+#elif defined(_IRR_COMPILE_WITH_SAILFISH_DEVICE_)
+#include "sailfish_render.h"
 #endif
 
 
@@ -100,6 +102,7 @@ irr::IrrlichtDevice* IrrlichtManager::CreateIrrlichtDevicePC(const Config& confi
             bitdepth = desktopDepth;
         }
     }
+
 #endif
     mEventReceiver = new EventReceiverBase(config);
 
@@ -139,6 +142,21 @@ irr::IrrlichtDevice* IrrlichtManager::CreateIrrlichtDevicePC(const Config& confi
         if (!mIrrlichtDevice)
             return 0;
 	}
+#ifdef _IRR_COMPILE_WITH_SAILFISH_DEVICE_
+    else
+    {
+        IOSOperator * osOperator = mIrrlichtDevice->getOSOperator();
+        if ( osOperator )
+        {
+            const core::stringc& osVersion( osOperator->getOperatingSystemVersion() );
+            if ( !osVersion.empty() )
+            {
+                LOG.Log(LP_INFO, osVersion.c_str() );
+                LOG.LogLn(LP_INFO, NULL);
+            }
+        }
+    }
+#endif
 	LOG.Info(L"createDevice ok\n");
 
 	InitVideoModes(config, mIrrlichtDevice);
@@ -154,7 +172,6 @@ irr::IrrlichtDevice* IrrlichtManager::CreateIrrlichtDevicePC(const Config& confi
 		AddAllES2Shaders(config, mIrrlichtDevice->getVideoDriver(), mIrrlichtDevice->getSceneManager());
 	}
 #endif
-
 	return mIrrlichtDevice;
 }
 
@@ -398,6 +415,32 @@ bool IrrlichtManager::Init(const Config& config)
 
 	lmoMeshFileLoader->drop();
 
+#ifdef _IRR_COMPILE_WITH_SAILFISH_DEVICE_
+    LOG.Info(L"Create RenderTarget for Sailfish device\n");
+    //create RenderTarget and QuadScreen
+    core::dimension2du size;
+    size.Height = GetVideoDriver()->getScreenSize().Width;
+    size.Width = GetVideoDriver()->getScreenSize().Height;
+//    size = videoDriver->getScreenSize();
+
+    mSailfishDevice = dynamic_cast<irr::CIrrDeviceSailfish *>(mIrrlichtDevice);
+    if( mSailfishDevice )
+    {
+        mSailfishDevice->setQESOrientation(EOET_TRANSFORM_90);
+    }
+
+    mColorTexture = GetVideoDriver()->addRenderTargetTexture(size, "RTT1", video::ECF_A8R8G8B8);
+    mDepthTexture = GetVideoDriver()->addRenderTargetTexture(size, "DepthStencil", video::ECF_D16);
+
+    mRenderTarget = GetVideoDriver()->addRenderTarget();
+    mRenderTarget->setTexture(mColorTexture, mDepthTexture);
+
+    mScreenQuad = new ScreenQuad(this,config);
+    mScreenQuad->m_material.setTexture(0,mColorTexture);
+    mScreenQuad->m_material.setTexture(1,mDepthTexture);
+
+    mCameras[ECT_GAME]->setAspectRatio((f32)size.Width/(f32)size.Height);
+#endif
     return true;
 }
 
@@ -846,20 +889,7 @@ void IrrlichtManager::ForceIrrlichtUpdate()
     if ( mIrrlichtDevice && mIrrlichtDevice->run() && mVideoDriver && mSceneManager )
     {
 #ifdef _IRR_COMPILE_WITH_SAILFISH_DEVICE_
-        if(mRenderTarget == NULL)
-        {
-            core::dimension2du size;
-            size.Width = mVideoDriver->getScreenSize().Height;
-            size.Height = mVideoDriver->getScreenSize().Width;
-            mRenderTarget = mVideoDriver->addRenderTargetTexture(
-                            size, "RTT1", video::ECF_A8R8G8B8);
-            mVideoDriver->setRenderTarget(mRenderTarget, video::ECBF_COLOR);
-        }
-        else
-        //if( mRenderTarget )
-        {
-            mVideoDriver->setRenderTarget(mRenderTarget, video::ECBF_COLOR);
-        }
+        //setRenderTarget();
 #endif
         LOG.Debug("beginScene\n");
         mVideoDriver->beginScene(true, true, video::SColor(150,50,50,50));
@@ -870,32 +900,7 @@ void IrrlichtManager::ForceIrrlichtUpdate()
         }
         LOG.Debug("endScene\n");
 #ifdef _IRR_COMPILE_WITH_SAILFISH_DEVICE_
-        if( mRenderTarget )
-        {
-            mVideoDriver->setRenderTarget(NULL, false, false);
-            video::SMaterial Material;
-            video::S3DVertex Vertices[4];
-            Material.Wireframe = false;
-            Material.Lighting = false;
-//            Material.
-            Material.Thickness=0.f;
-            Vertices[0] = video::S3DVertex(-1,-1.0,0, 5,1,0,
-                                           video::SColor(255,0,255,255), 0, 1);
-            Vertices[1] = video::S3DVertex(-1,1,0, 10,0,0,
-                                           video::SColor(255,255,0,255), 0, 0);
-            Vertices[2] = video::S3DVertex(1,1,0, 20,1,1,
-                                           video::SColor(255,255,255,0), 1, 0);
-            Vertices[3] = video::S3DVertex(1,-1,0, 40,0,1,
-                                           video::SColor(255,0,255,0), 1, 1);
-            irr::u16 indices[] = { 0,1,2, 0,2,3 };
-            mVideoDriver->setTransform ( irr::video::ETS_PROJECTION, irr::core::IdentityMatrix );
-            mVideoDriver->setTransform ( irr::video::ETS_VIEW, irr::core::IdentityMatrix );
-            mVideoDriver->setTransform ( irr::video::ETS_WORLD, irr::core::IdentityMatrix );
-            Material.setTexture(0, mRenderTarget);
-            mVideoDriver->setMaterial(Material);
-//            driver->setTransform(irr::video::ETS_WORLD, m_transformation);
-            mVideoDriver->drawVertexPrimitiveList(Vertices, 4, indices, 2, irr::video::EVT_STANDARD, irr::scene::EPT_TRIANGLES, irr::video::EIT_16BIT);
-        }
+        //unsetRenderTarget();
 #endif
         mVideoDriver->endScene();
     }
@@ -998,6 +1003,21 @@ void IrrlichtManager::SetCameraGui()
 			cursor->setVisible(true);
 		}
     }
+}
+
+void IrrlichtManager::setRenderTarget()
+{
+#ifdef _IRR_COMPILE_WITH_SAILFISH_DEVICE_
+    GetVideoDriver()->setRenderTargetEx(mRenderTarget,video::ECBF_COLOR | video::ECBF_DEPTH, video::SColor(0,0,0,255));
+#endif
+}
+
+void IrrlichtManager::unsetRenderTarget()
+{
+#ifdef _IRR_COMPILE_WITH_SAILFISH_DEVICE_
+    GetVideoDriver()->setRenderTargetEx(NULL,0,video::SColor(0));
+    mScreenQuad->draw(GetVideoDriver());
+#endif
 }
 
 void IrrlichtManager::SetCameraEditor()

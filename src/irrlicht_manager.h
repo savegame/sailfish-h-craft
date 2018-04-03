@@ -17,6 +17,11 @@ struct VideoMode
 struct android_app;
 class Config;
 class MeshTextureLoader;
+class ScreenQuad;
+
+namespace irr {
+    class CIrrDeviceSailfish;
+}
 
 // Interface to Irrlicht stuff
 // Does also handle cameras
@@ -66,6 +71,9 @@ public:
     void SetCameraGame(bool hideCursor);
     void SetCameraEditor();
     void SetCameraGui();
+
+    void setRenderTarget();
+    void unsetRenderTarget();
 
     irr::scene::SMeshBuffer* CreateBoxMeshBuffer(const irr::core::aabbox3d<irr::f32> &box_);
     // only convex polygons or polygons where all lines from the first point to other points are within the polygon
@@ -141,7 +149,12 @@ private:
     std::vector<VideoMode>        mVideoModes;
 
 #ifdef _IRR_COMPILE_WITH_SAILFISH_DEVICE_
-    irr::video::ITexture*         mRenderTarget;
+    irr::video::IRenderTarget *mRenderTarget;
+    irr::video::ITexture      *mDepthTexture;
+    irr::video::ITexture      *mColorTexture;
+    ScreenQuad                *mScreenQuad;
+    irr::scene::ICameraSceneNode *mFixedCamera;
+    irr::CIrrDeviceSailfish   *mSailfishDevice;
 #endif
 
 	typedef std::map<irr::s32, irr::s32>::iterator ES2ShaderMaterialIter;

@@ -21,7 +21,7 @@ I will also follow reddit post on [/r/hcraft](http://www.reddit.com/r/hcraft/).
 
 ### About SailfishOS prot ###
 
-This port builded with custom irrlicht engine port. H-Craft use OpenAL for play sound in game, but in SailfishOS it not work.
+This port builded with custom irrlicht engine port. H-Craft use OpenAL for play sound in game, ~~but in SailfishOS it not work~~ and it work normal, but sound volume not change by sound buttons, only in game settings.
 As written [here](http://www.irrgheist.com/hcraftsource.htm) the media files for game placed on [bitbucket](https://bitbucket.org/mzeilfelder/media_hc1), but you must read license, before use media (only for personal use now, not for public it).
 
 ### Build for SailfishOS ###
